@@ -1,9 +1,8 @@
 import json
-import os
 from datetime import datetime
 
 # File path for task storage
-DEFAULT_TASKS_FILE = "tasks.json"
+DEFAULT_TASKS_FILE = "src/tasks.json"
 
 def load_tasks(file_path=DEFAULT_TASKS_FILE):
     """
@@ -123,3 +122,22 @@ def get_overdue_tasks(tasks):
         if not task.get("completed", False) and 
            task.get("due_date", "") < today
     ]
+
+def sort_tasks(tasks, field):
+    if field == "Priority":
+        priority_order = {"High": 1, "Medium": 2, "Low": 3}
+        return sorted(tasks, key=lambda x: priority_order.get(x.get("priority")))
+    elif field == "Due Date":
+        return sorted(tasks, key=lambda x: x.get("due_date"))
+    elif field == "Default":
+        return sorted(tasks, key=lambda x: x.get("id"))
+
+def edit_task(tasks, task_id, new_description):
+    for task in tasks:
+        if task["id"] == task_id:
+            task["description"] = new_description
+    return tasks
+
+def delete_complete_tasks(tasks):
+    incomplete_tasks = [task for task in tasks if not task.get("completed", False)]
+    return incomplete_tasks
